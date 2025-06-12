@@ -10,9 +10,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 //this need to be complete
 
+import com.project.jobportal.services.CustomUserDetailsService;
+
 @Configuration
 public class WebSecurityConfig {
 	
+	private final CustomUserDetailsService customUserDetailsService;
+	
+	public WebSecurityConfig(CustomUserDetailsService customUserDetailsService) {
+		super();
+		this.customUserDetailsService = customUserDetailsService;
+	}
 	
 	private final String[] publicUrl = {
 			"/",
@@ -30,25 +38,29 @@ public class WebSecurityConfig {
             "/*.js.map",
             "/fonts**", "/favicon.ico", "/resources/**", "/error"
 	};
-	/*@Bean
+	@Bean
 	protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
 	{
+		http.authenticationProvider(authenticationProvider());
+		
 		http.authorizeHttpRequests(auth ->{auth.requestMatchers( publicUrl).permitAll();
 		                                   auth.anyRequest().authenticated();});
 		return http.build();
 	}
-	//@Bean
-	//private AuthenticationProvider authenticationProvider() {
+	
+	@Bean
+	private AuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-		//authenticationProvider.setPasswordEncoder(passwordEncoder());
-		authenticationProvider.setUserDetailsService(null);
+		authenticationProvider.setPasswordEncoder(passwordEncoder());
+		authenticationProvider.setUserDetailsService(customUserDetailsService);
+		return authenticationProvider;
 		
 	}
 	@Bean
-	//private PasswordEncoder passwordEncoder() {
-		//return new BCryptPasswordEncoder();
+	private PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
 		
 	}
-	*/
+
 
 }
